@@ -29,11 +29,29 @@ int _hour(String s) {
 }
 
 int _minute(String s) {
+  if (s.length < 12) return 0;
   return int.parse(s.substring(10, 12), radix: 10, onError : (e) => 0);
 }
 
 int _second(String s) {
+  if (s.length < 14) return 0;
   return int.parse(s.substring(12, 14), radix: 10, onError : (e) => 0);
+}
+
+int _millisecond(String s) {
+  var startIdx;
+  if (s.contains('.')) {
+    startIdx = s.indexOf('.') + 1;
+  } else if (s.contains(',')) {
+    startIdx = s.indexOf(',') + 1;
+  } else {
+    return 0;
+  }
+  
+  var stopIdx = s.length - 1;
+  var fraction = '0' + '.' + s.substring(startIdx, stopIdx);
+  var ms = double.parse(fraction) * 1000;
+  return ms.toInt();
 }
 
 /**
@@ -70,5 +88,6 @@ DateTime parse(String s) {
       _day(s),
       _hour(s),
       _minute(s),
-      _second(s));
+      _second(s),
+      _millisecond(s));
 }

@@ -37,6 +37,30 @@ void main() {
       var second = ldap2date.parse('201302281927.607Z').second;
       expect(second, equals(0));
     });
+    test('should parse the milliseconds', () {
+      var ms = ldap2date.parse(TIME).millisecond;
+      expect(ms, equals(607));
+    });
+    test('should parse ms even if minutes/seconds are missing', () {
+      var ms = ldap2date.parse('2013022819.648Z').millisecond;
+      expect(ms, equals(648));
+    });
+    test('should work with commas', () {
+      var ms = ldap2date.parse('2013022819,648Z').millisecond;
+      expect(ms, equals(648));
+    });
+    test('should return 0 if milliseconds are not present', () {
+      var ms = ldap2date.parse('2013022819Z').millisecond;
+      expect(ms, equals(0));
+    });
+    test('should handle 2 digit fractions', () {
+      var ms = ldap2date.parse('20130228192706.12Z').millisecond;
+      expect(ms, equals(120));
+    });
+    test('should handle 1 digit fractions', () {
+      var ms = ldap2date.parse('20130228192706.8Z').millisecond;
+      expect(ms, equals(800));
+    });
   });
   group('toGeneralizedTime', () {
     test('should return a Generalized Time string', () {
