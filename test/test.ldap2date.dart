@@ -61,6 +61,24 @@ void main() {
       var ms = ldap2date.parse('20130228192706.8Z').millisecond;
       expect(ms, equals(800));
     });
+    test('should handle positive timezones', () {
+      DateTime date = ldap2date.parse('20130228192706.8+531');
+      expect(date.millisecond, equals(800));
+      expect(date.minute, equals(58));
+      expect(date.hour, equals(0));
+    });
+    test('should handle negative timezones', () {
+      DateTime date = ldap2date.parse('20130228192706.8-531');
+      expect(date.millisecond, equals(800));
+      expect(date.minute, equals(56));
+      expect(date.hour, equals(13));
+    });
+    test('timezone minutes should be optional', () {
+      DateTime date = ldap2date.parse('20130228192706.8-5');
+      expect(date.millisecond, equals(800));
+      expect(date.minute, equals(27));
+      expect(date.hour, equals(14));
+    });
   });
   group('toGeneralizedTime', () {
     test('should return a Generalized Time string', () {

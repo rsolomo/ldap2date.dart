@@ -40,6 +40,7 @@ int _second(String s) {
 
 int _millisecond(String s) {
   var startIdx;
+  //if (s[s.length - 1] == 'Z') return 0;
   if (s.contains('.')) {
     startIdx = s.indexOf('.') + 1;
   } else if (s.contains(',')) {
@@ -48,11 +49,31 @@ int _millisecond(String s) {
     return 0;
   }
   
-  var stopIdx = s.length - 1;
+  var tz = 0;
+  var symbolIdx = -1;
+  var plusIdx = s.indexOf('+');
+  var minusIdx = s.indexOf('-');
+  
+  if (plusIdx != -1) symbolIdx = plusIdx;
+  if (minusIdx != -1) symbolIdx = minusIdx;
+  
+  var stopIdx = symbolIdx != -1 ? symbolIdx : s.length - 1;
   var fraction = '0' + '.' + s.substring(startIdx, stopIdx);
   var ms = double.parse(fraction) * 1000;
-  return ms.toInt();
+  
+  if (symbolIdx != -1) {
+    var minutes = s.substring(symbolIdx + 2);
+    var hours = s.substring(symbolIdx + 1, symbolIdx + 2);
+    var one = plusIdx != -1 ? 1 : -1;
+    
+    int hr = one * int.parse(hours, radix: 10) * 60 * 60 * 1000;
+    int min = minutes.isEmpty ? 0 : one * int.parse(minutes, radix: 10) * 60 * 1000;
+    tz = hr + min;
+  }
+  
+  return ms.toInt() + tz;
 }
+
 
 /**
  * Returns a string in LDAP Generalized Time format.
@@ -81,13 +102,13 @@ String toGeneralizedTime(DateTime datetime) {
  * 
  *  ldap2date.parse('20130228192706.607Z')
  */
-DateTime parse(String s) {
+DateTime parse(String ldaptime) {
   return new DateTime(
-      _year(s),
-      _month(s),
-      _day(s),
-      _hour(s),
-      _minute(s),
-      _second(s),
-      _millisecond(s));
+      _year(ldaptime),
+      _month(ldaptime),
+      _day(ldaptime),
+      _hour(ldaptime),
+      _minute(ldaptime),
+      _second(ldaptime),
+      _millisecond(ldaptime));
 }
