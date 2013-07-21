@@ -79,6 +79,15 @@ void main() {
       expect(date.minute, equals(27));
       expect(date.hour, equals(14));
     });
+    test('should throw a FormatException if the date cannot be parsed', () {
+      expect(() => ldap2date.parse('A2013022819Z'), throwsFormatException);
+    });
+    test('should throw a FormatException if the date cannot be parsed (2)', () {
+      expect(() => ldap2date.parse('201'), throwsFormatException);
+    });
+    test('should throw a FormatException if the timezone is not present', () {
+      expect(() => ldap2date.parse('20130228192706.85'), throwsFormatException);
+    });
   });
   group('toGeneralizedTime', () {
     test('should return a Generalized Time string', () {

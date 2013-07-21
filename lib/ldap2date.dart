@@ -40,7 +40,6 @@ int _second(String s) {
 
 int _millisecond(String s) {
   var startIdx;
-  //if (s[s.length - 1] == 'Z') return 0;
   if (s.contains('.')) {
     startIdx = s.indexOf('.') + 1;
   } else if (s.contains(',')) {
@@ -54,8 +53,13 @@ int _millisecond(String s) {
   var plusIdx = s.indexOf('+');
   var minusIdx = s.indexOf('-');
   
-  if (plusIdx != -1) symbolIdx = plusIdx;
-  if (minusIdx != -1) symbolIdx = minusIdx;
+  if (plusIdx != -1) {
+    symbolIdx = plusIdx;
+  } else if (minusIdx != -1) {
+    symbolIdx = minusIdx;
+  } else if (!s.contains('Z')) {
+    throw new FormatException();
+  }
   
   var stopIdx = symbolIdx != -1 ? symbolIdx : s.length - 1;
   var fraction = '0' + '.' + s.substring(startIdx, stopIdx);
@@ -98,11 +102,14 @@ String toGeneralizedTime(DateTime datetime) {
 /**
  * Parses LDAP time strings.
  * 
- * This returns a new [DateTime] based upon the formatted string.  
+ * Returns a new [DateTime] based upon the formatted string.
+ * 
+ * May throw [FormatException] if the string cannot be parsed.  
  * 
  *  ldap2date.parse('20130228192706.607Z')
  */
 DateTime parse(String ldaptime) {
+  if (ldaptime.length < 10) throw new FormatException(); 
   return new DateTime(
       _year(ldaptime),
       _month(ldaptime),
