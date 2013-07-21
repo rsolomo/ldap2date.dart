@@ -1,14 +1,14 @@
 library ldap2date;
 
 String _pad2(int n) {
-  if (n < 10) return '0' + n.toString();
+  if (n < 10) return '0$n';
   return n.toString();
 }
 
 String _pad4(int n) {
-  if (n < 10) return '000' + n.toString();
-  if (n < 100) return '00' + n.toString();
-  if (n < 1000) return '0' + n.toString();
+  if (n < 10) return '000$n';
+  if (n < 100) return '00$n';
+  if (n < 1000) return '0$n';
   return n.toString();
 }
 
@@ -47,7 +47,7 @@ int _millisecond(String s) {
   } else {
     return 0;
   }
-  
+
   var tz = 0;
   var symbolIdx = -1;
   var plusIdx = s.indexOf('+');
@@ -60,7 +60,7 @@ int _millisecond(String s) {
   } else if (!s.contains('Z')) {
     throw new FormatException();
   }
-  
+
   var stopIdx = symbolIdx != -1 ? symbolIdx : s.length - 1;
   var fraction = '0' + '.' + s.substring(startIdx, stopIdx);
   var ms = double.parse(fraction) * 1000;
@@ -74,7 +74,7 @@ int _millisecond(String s) {
     int min = minutes.isEmpty ? 0 : one * int.parse(minutes, radix: 10) * 60 * 1000;
     tz = hr + min;
   }
-  
+
   return ms.toInt() + tz;
 }
 
@@ -87,16 +87,17 @@ int _millisecond(String s) {
 String toGeneralizedTime(DateTime datetime) {
   var d = datetime.toUtc();
   var ms = d.millisecond;
-  var fraction = ms != 0 ? '.' + ms.toString() : '';
-  var str = '' +
-    _pad4(d.year) +
-    _pad2(d.month) +
-    _pad2(d.day) +
-    _pad2(d.hour) +
-    _pad2(d.minute) +
-    _pad2(d.second) +
-    fraction + 'Z';
-  return str;
+  var fraction = ms != 0 ? '.$ms' : '';
+  var buf = new StringBuffer();
+  buf.write(_pad4(d.year));
+  buf.write(_pad2(d.month));
+  buf.write(_pad2(d.day));
+  buf.write(_pad2(d.hour));
+  buf.write(_pad2(d.minute));
+  buf.write(_pad2(d.second));
+  buf.write(fraction);
+  buf.write('Z');
+  return buf.toString();
 }
 
 /**
@@ -109,7 +110,7 @@ String toGeneralizedTime(DateTime datetime) {
  *  ldap2date.parse('20130228192706.607Z')
  */
 DateTime parse(String ldaptime) {
-  if (ldaptime.length < 10) throw new FormatException(); 
+  if (ldaptime.length < 10) throw new FormatException();
   return new DateTime.utc(
       _year(ldaptime),
       _month(ldaptime),
