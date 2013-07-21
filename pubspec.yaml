@@ -2,5 +2,6 @@ name: ldap2date
 version: 0.1.0
 author: Ray Solomon <raybsolomon@gmail.com>
 description: Converts LDAP Generalized Time strings to DateTime objects
+homepage: https://github.com/rsolomo/ldap2date.dart
 dev_dependencies:
   unittest: any

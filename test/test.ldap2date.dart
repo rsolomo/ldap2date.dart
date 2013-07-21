@@ -3,6 +3,8 @@ import 'package:ldap2date/ldap2date.dart' as ldap2date;
 
 
 void main() {
+  DateTime date = ldap2date.parse('20130305032706.607Z');
+  assert(date.toUtc().toString() == '2013-03-05 03:27:06.607Z');
   group('parse', () {
     const TIME = '20130228192706.607Z';
     test('should parse the year', () {
@@ -93,20 +95,27 @@ void main() {
     test('should return a Generalized Time string', () {
       var ms = 1362079626607;
       var date = new DateTime.fromMillisecondsSinceEpoch(ms, isUtc: true);
-      var time = ldap2date.toGeneralizedTime(date);
-      expect(time, equals('20130228192706.607Z'));
+      var ldaptime = ldap2date.toGeneralizedTime(date);
+      expect(ldaptime, equals('20130228192706.607Z'));
     });
     test('should handle single digit years', () {
       var ms = -61941924311001;
       var date = new DateTime.fromMillisecondsSinceEpoch(ms, isUtc: true);
-      var time = ldap2date.toGeneralizedTime(date);
-      expect(time, equals('00070220135448.999Z'));
+      var ldaptime = ldap2date.toGeneralizedTime(date);
+      expect(ldaptime, equals('00070220135448.999Z'));
     });
     test('should not return fraction, if it is 0', () {
       var ms = 1362079626000;
       var date = new DateTime.fromMillisecondsSinceEpoch(ms, isUtc: true);
-      var time = ldap2date.toGeneralizedTime(date);
-      expect(time, equals('20130228192706Z'));
+      var ldaptime = ldap2date.toGeneralizedTime(date);
+      expect(ldaptime, equals('20130228192706Z'));
     });
+  });
+  test('parse / toGeneralizedTime should be opposite of each other', () {
+    var date = DateTime.parse('2013-03-05 03:27:06.607Z');
+    var ldaptime = ldap2date.toGeneralizedTime(date);
+    var date2 = ldap2date.parse(ldaptime).toUtc();
+    expect(ldaptime, equals('20130305032706.607Z'));
+    expect(date2.toString(), equals('2013-03-05 03:27:06.607Z'));
   });
 }

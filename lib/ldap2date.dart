@@ -110,7 +110,7 @@ String toGeneralizedTime(DateTime datetime) {
  */
 DateTime parse(String ldaptime) {
   if (ldaptime.length < 10) throw new FormatException(); 
-  return new DateTime(
+  return new DateTime.utc(
       _year(ldaptime),
       _month(ldaptime),
       _day(ldaptime),
