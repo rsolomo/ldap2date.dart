@@ -12,6 +12,30 @@ String _pad4(int n) {
   return n.toString();
 }
 
+int _year(String s) {
+  return int.parse(s.substring(0, 4), radix: 10);
+}
+
+int _month(String s) {
+  return int.parse(s.substring(4, 6), radix: 10);
+}
+
+int _day(String s) {
+  return int.parse(s.substring(6, 8), radix: 10);
+}
+
+int _hour(String s) {
+  return int.parse(s.substring(8, 10), radix: 10);
+}
+
+int _minute(String s) {
+  return int.parse(s.substring(10, 12), radix: 10, onError : (e) => 0);
+}
+
+int _second(String s) {
+  return int.parse(s.substring(12, 14), radix: 10, onError : (e) => 0);
+}
+
 /**
  * Returns a string in LDAP Generalized Time format.
  *
@@ -30,4 +54,21 @@ String toGeneralizedTime(DateTime datetime) {
     _pad2(d.second) +
     fraction + 'Z';
   return str;
+}
+
+/**
+ * Parses LDAP time strings.
+ * 
+ * This returns a new [DateTime] based upon the formatted string.  
+ * 
+ *  ldap2date.parse('20130228192706.607Z')
+ */
+DateTime parse(String s) {
+  return new DateTime(
+      _year(s),
+      _month(s),
+      _day(s),
+      _hour(s),
+      _minute(s),
+      _second(s));
 }
